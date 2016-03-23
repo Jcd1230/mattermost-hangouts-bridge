@@ -44,35 +44,35 @@ var get_user = function(client, chat_id) {
 			return user_info[chat_id];
 		});
 	} else {
-		return new Promise(function(resolve) {
-			console.log("Cached user");
-			resolve(user_info[chat_id]);
-		});
+		return Promise.resolve(user_info[chat_id]);
 	}
 }
 
 function hangouts_receive(client, user, segments) {
 	console.log("%j",user);
-	var payload = {
-		text: "HANGOUTS - " + segments.reduce(function(prev, next) { return prev + next.text; }, ""),
-		username: user.first_name || "Unknown"
-	};
-	var postData = JSON.stringify(payload);
-	var req = http.request({
-		port: 8065,
-		method: "POST",
-		path: "/hooks/" + IN_HOOK_ID,
-		headers: {
-			'Content-Type': 'application/json',
-			'Content-Length': postData.length
-		}
-	});
-	req.on('error', function(e) {
-		console.log(e);
-	});
-	req.write(postData);
-	req.end();
-	console.log(JSON.stringify(payload));
+	var msg = segments.reduce(function(prev, next) { return prev + next.text; }, "");
+	if (msg.indexOf("HANGOUTS:") < 0) {
+		var payload = {
+			text: "HANGOUTS: " + msg,
+			username: user.first_name || "Unknown"
+		};
+		var postData = JSON.stringify(payload);
+		var req = http.request({
+			port: 8065,
+			method: "POST",
+			path: "/hooks/" + IN_HOOK_ID,
+			headers: {
+				'Content-Type': 'application/json',
+				'Content-Length': postData.length
+			}
+		});
+		req.on('error', function(e) {
+			console.log(e);
+		});
+		req.write(postData);
+		req.end();
+		console.log(JSON.stringify(payload));
+	}
 }
 
 client.on('chat_message', function(ev) {
@@ -108,10 +108,14 @@ function handleReq(req, resp) {
 
 	req.on("end", function() {
 		var post = qs.parse(d);
-		if (connected) {
-			send_hangouts_msg(post.user_name, post.text);
-		} else {
-			queued_msgs.push({user: post.user_name, msg: post.text});
+		var user = post.user_name;
+		var msg = post.text;
+		if (msg.indexOf("MM:") < 0) {
+			if (connected) {
+				send_hangouts_msg(post.user_name, post.text);
+			} else {
+				queued_msgs.push({user: post.user_name, msg: post.text});
+			}
 		}
 	});
 }
