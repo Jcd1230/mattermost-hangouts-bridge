@@ -24,6 +24,7 @@ var send_hangouts_msg = function(user, msg) {
 var reconnect = function() {
 	client.connect(creds).then(function() {
 		connected = true;
+		console.log("CONNECTED");
 		for (var i = 0; i < queued_msgs.length; i++) {
 			var user = queued_msgs[i].user || "Unknown";
 			var msg = queued_msgs[i].msg || "";
@@ -51,7 +52,7 @@ var get_user = function(client, chat_id) {
 function hangouts_receive(client, user, segments) {
 	console.log("%j",user);
 	var msg = segments.reduce(function(prev, next) { return prev + next.text; }, "");
-	if (msg.indexOf("HANGOUTS:") < 0) {
+	if (msg.indexOf("MM:") < 0) {
 		var payload = {
 			text: "HANGOUTS: " + msg,
 			username: user.first_name || "Unknown"
@@ -91,6 +92,7 @@ client.on('chat_message', function(ev) {
 
 client.on("connect_failed", function() {
 	connected = false;
+	console.log("DISCONNECTED!");
 	Q.Promise(function(rs) {
 		setTimeout(rs, 3000);
 	}).then(reconnect);
@@ -110,7 +112,7 @@ function handleReq(req, resp) {
 		var post = qs.parse(d);
 		var user = post.user_name;
 		var msg = post.text;
-		if (msg.indexOf("MM:") < 0) {
+		if (msg.indexOf("HANGOUTS:") < 0) {
 			if (connected) {
 				send_hangouts_msg(post.user_name, post.text);
 			} else {
@@ -119,6 +121,15 @@ function handleReq(req, resp) {
 		}
 	});
 }
+
+function keepactive() {
+	if (connected) {
+		client.setactiveclient(true, 20);
+		setTimeout(keepactive, 20*1000);
+	}
+}
+
+keepactive();
 
 var server = http.createServer(handleReq);
 
