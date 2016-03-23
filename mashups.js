@@ -92,11 +92,12 @@ client.on('chat_message', function(ev) {
 	}
 });
 
-client.on("connect_failed", function() {
+client.on("connect_failed", function(err) {
 	connected = false;
 	console.log("DISCONNECTED!");
+	console.log(err);
 	Q.Promise(function(rs) {
-		setTimeout(rs, 3000);
+		setTimeout(rs, 2000);
 	}).then(reconnect);
 });
 
