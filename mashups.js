@@ -25,6 +25,7 @@ var reconnect = function() {
 	client.connect(creds).then(function() {
 		connected = true;
 		console.log("CONNECTED");
+		console.log(queued.msgs.length + " MESSAGES WERE QUEUED");
 		for (var i = 0; i < queued_msgs.length; i++) {
 			var user = queued_msgs[i].user || "Unknown";
 			var msg = queued_msgs[i].msg || "";
