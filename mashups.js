@@ -26,11 +26,12 @@ var reconnect = function() {
 		connected = true;
 		console.log("CONNECTED");
 		console.log(queued_msgs.length + " MESSAGES WERE QUEUED");
-		for (var i = 0; i < queued_msgs.length; i++) {
-			var user = queued_msgs[i].user || "Unknown";
-			var msg = queued_msgs[i].msg || "";
+		while (queued_msgs.length > 0 && connected)
+			var msgo = queued_msgs.shift();
+			var user = msgo.user || "Unknown";
+			var msg = msgo.msg || "";
+			send_hangouts_msg(user, msg);
 		}
-		queued_msgs = [];
 	});
 };
 
