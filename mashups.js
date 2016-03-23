@@ -16,14 +16,17 @@ var user_info = {}
 var queued_msgs = [];
 var connected = false;
 
+var send_hangouts_msg = function(user, msg) {
+	var bld = new Client.MessageBuilder();
+	client.sendchatmessage(GROUP_ID, bld.text("MM:"+ user + ": " + msg).toSegments());
+}
+
 var reconnect = function() {
 	client.connect(creds).then(function() {
 		connected = true;
 		for (var i = 0; i < queued_msgs.length; i++) {
 			var user = queued_msgs[i].user || "Unknown";
 			var msg = queued_msgs[i].msg || "";
-			var bld = new Client.MessageBuilder();
-			client.sendchatmessage(GROUP_ID, bld.text("MM:"+ user + " - " + msg).toSegments());
 		}
 		queued_msgs = [];
 	});
@@ -42,6 +45,7 @@ var get_user = function(client, chat_id) {
 		});
 	} else {
 		return new Promise(function(resolve) {
+			console.log("Cached user");
 			resolve(user_info[chat_id]);
 		});
 	}
@@ -105,9 +109,7 @@ function handleReq(req, resp) {
 	req.on("end", function() {
 		var post = qs.parse(d);
 		if (connected) {
-			var bld = new Client.MessageBuilder();
-			client.sendchatmessage(GROUP_ID, bld.text("MM:"+ post.user_name + " - " + post.text).toSegments());
-
+			send_hangouts_msg(post.user_name, post.text);
 		} else {
 			queued_msgs.push({user: post.user_name, msg: post.text});
 		}
