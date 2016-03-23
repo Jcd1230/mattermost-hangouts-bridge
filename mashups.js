@@ -47,7 +47,9 @@ var get_user = function(client, chat_id) {
 			return user_info[chat_id];
 		});
 	} else {
-		return Promise.resolve(user_info[chat_id]);
+		return Q.Promise(function(resolve) {
+			resolve(user_info[chat_id]);
+		});
 	}
 }
 
