@@ -1,4 +1,0 @@
-# coverage.py configuration
-[run]
-branch = True
-omit = *_pb2.py,hangups/test/*
