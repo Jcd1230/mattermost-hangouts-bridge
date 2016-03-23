@@ -25,6 +25,7 @@ var reconnect = function() {
 			var bld = new Client.MessageBuilder();
 			client.sendchatmessage(GROUP_ID, bld.text("MM:"+ user + " - " + msg).toSegments());
 		}
+		queued_msgs = [];
 	});
 };
 
@@ -103,7 +104,13 @@ function handleReq(req, resp) {
 
 	req.on("end", function() {
 		var post = qs.parse(d);
-		console.log(post);
+		if (connected) {
+			var bld = new Client.MessageBuilder();
+			client.sendchatmessage(GROUP_ID, bld.text("MM:"+ post.user_name + " - " + post.text).toSegments());
+
+		} else {
+			queued_msgs.push({user: post.user_name, msg: post.text});
+		}
 	});
 }
 
