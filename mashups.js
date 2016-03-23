@@ -3,13 +3,18 @@ var Q = require('q');
 var http = require("http");
 var qs = require("querystring");
 
-var GROUP_ID = "UgwKg3aZiRME34FZogh4AaABAQ";
+var GROUP_ID = "Ugxfu9QF7O2mjXLu_6N4AaABAQ";
+
 var IN_HOOK_ID = "8wfniq93oiyntcxbqf8ipfkwte";
 var creds = function() {
 	return {
 		auth: Client.authStdin
 	};
 };
+
+
+var MM_PREFIX = "MM:";
+var HO_PREFIX = "HO:";
 
 var client = new Client();
 var user_info = {}
@@ -18,7 +23,7 @@ var connected = false;
 
 var send_hangouts_msg = function(user, msg) {
 	var bld = new Client.MessageBuilder();
-	client.sendchatmessage(GROUP_ID, bld.text("MM:"+ user + ": " + msg).toSegments());
+	client.sendchatmessage(GROUP_ID, bld.text(MM_PREFIX + user + ": " + msg).toSegments());
 }
 
 var reconnect = function() {
@@ -56,9 +61,9 @@ var get_user = function(client, chat_id) {
 function hangouts_receive(client, user, segments) {
 	console.log("%j",user);
 	var msg = segments.reduce(function(prev, next) { return prev + next.text; }, "");
-	if (msg.indexOf("MM:") < 0) {
+	if (msg.indexOf(MM_PREFIX) < 0) {
 		var payload = {
-			text: "HANGOUTS: " + msg,
+			text: HO_PREFIX + msg,
 			username: user.first_name || "Unknown"
 		};
 		var postData = JSON.stringify(payload);
@@ -117,7 +122,7 @@ function handleReq(req, resp) {
 		var post = qs.parse(d);
 		var user = post.user_name;
 		var msg = post.text;
-		if (msg.indexOf("HANGOUTS:") < 0) {
+		if (msg.indexOf(HO_PREFIX) < 0) {
 			if (connected) {
 				send_hangouts_msg(post.user_name, post.text);
 			} else {
