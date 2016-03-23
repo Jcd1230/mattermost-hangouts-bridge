@@ -26,7 +26,7 @@ var reconnect = function() {
 		connected = true;
 		console.log("CONNECTED");
 		console.log(queued_msgs.length + " MESSAGES WERE QUEUED");
-		while (queued_msgs.length > 0 && connected)
+		while (queued_msgs.length > 0 && connected) {
 			var msgo = queued_msgs.shift();
 			var user = msgo.user || "Unknown";
 			var msg = msgo.msg || "";
