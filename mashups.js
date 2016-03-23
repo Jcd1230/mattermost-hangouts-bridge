@@ -119,6 +119,7 @@ function handleReq(req, resp) {
 			if (connected) {
 				send_hangouts_msg(post.user_name, post.text);
 			} else {
+				console.log("Disconnected, message queued...");
 				queued_msgs.push({user: post.user_name, msg: post.text});
 			}
 		}
