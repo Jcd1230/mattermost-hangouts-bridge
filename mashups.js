@@ -92,6 +92,9 @@ var get_user = function(client, chat_id) {
 			user.icon_url = user.photo_url || ("http://placeholdit.imgix.net/~text?txtsize=34&w=60&h=60&txttrack=0&txtclr=ffffff&txt=" + user.first_name.charAt(0) + "&bg=" + getnewcolor());
 			user.hangouts_id = chat_id;
 			user_info[chat_id] = user;
+
+			console.log("NEW USER");
+			console.log(user);
 			return user_info[chat_id];
 		});
 	} else {
