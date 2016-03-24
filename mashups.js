@@ -41,17 +41,18 @@ var send_hangouts_msg = function(user, message) {
 		bld.bold(user).text(": ");
 	}
 
-	var msg = ("_" + message).replace(/```[\s\S]*```/," %|%_<code snippet>%|%_ ")
+	var msg = (" " + message).replace(/```[\s\S]*```/," %|%_<code snippet>%|%_ ")
 		.replace(/```[\s\S]*/," %|%_<code snippet>%|%_ ")
-		.replace(/__(.*?)__/,"%|%B$1%|%_")
-		.replace(/\*\*(.*?)\*\*/, "%|%B$1%|%_")
-		.replace(/_(.*?)_/, "%|%I$1%|%_")
-		.replace(/\*(.*?)\*/, "%|%I$1%|%_")
+		.replace(/__(.+?)__/,"%|%B$1%|%_")
+		.replace(/\*\*(.+?)\*\*/, "%|%B$1%|%_")
+		.replace(/_(.+?)_/, "%|%I$1%|%_")
+		.replace(/\*(.+?)\*/, "%|%I$1%|%_")
 		.replace(/(https?:\/\/\S*)/, "%|%L$1%|%_");
 
 	var sections = msg.split("%|%");
 
 	console.log("MESSAGE:");
+	console.log(msg);
 	console.log(sections);
 
 	for (var i = 0; i < sections.length; i++) {
