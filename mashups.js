@@ -9,6 +9,8 @@ var IN_HOOK_ID = "8wfniq93oiyntcxbqf8ipfkwte";
 
 var BOT_ID = ""; //bot chat_id
 
+var MM_TAG = "|MM|";
+
 var creds = function() {
 	return {
 		auth: Client.authStdin
@@ -38,12 +40,15 @@ var queued_msgs = [];
 var connected = false;
 
 var is_mm_msg = function(msg) {
-	return msg.indexOf("|MM|") < 0;
+	return msg.indexOf(MM_TAG) < 0;
 }
+
+var last_sent_author = "";
 
 var send_hangouts_msg = function(user, msg) {
 	var bld = new Client.MessageBuilder();
-	client.sendchatmessage(GROUP_ID, bld.text(MM_PREFIX + user + ": " + msg).toSegments());
+	client.sendchatmessage(GROUP_ID, bld.text((last_sent_author != user ? (user + ": ") : "") + msg + " " + MM_TAG).toSegments());
+	last_sent_author = user;
 }
 
 var send_mm_msg = function(username, msg) {
@@ -104,7 +109,7 @@ var get_user = function(client, chat_id) {
 var hangouts_receive = function(client, user, segments) {
 	console.log("%j",user);
 	var msg = segments.reduce(function(prev, next) { return prev + next.text; }, "");
-	if (msg.indexOf(MM_PREFIX) < 0) {
+	if (msg.indexOf(MM_TAG) < 0) {
 		send_mm_msg(user, msg);
 	}
 }
@@ -148,14 +153,12 @@ function handleReq(req, resp) {
 		var user = post.user_name;
 		var msg = post.text;
 		console.log("%j", post);
-		if (msg.indexOf(HO_PREFIX) < 0) {
 			if (connected) {
 				send_hangouts_msg(post.user_name, post.text);
 			} else {
 				console.log("Disconnected, message queued...");
 				queued_msgs.push({user: post.user_name, msg: post.text});
 			}
-		}
 	});
 }
 
