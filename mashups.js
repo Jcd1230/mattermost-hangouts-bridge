@@ -41,7 +41,7 @@ var send_hangouts_msg = function(user, message) {
 		bld.bold(user).text(": ");
 	}
 
-	var msg = message.replace(/```[\s\S]*```/," %|%_<code snippet>%|%_ ")
+	var msg = ("_" + message).replace(/```[\s\S]*```/," %|%_<code snippet>%|%_ ")
 		.replace(/```[\s\S]*/," %|%_<code snippet>%|%_ ")
 		.replace(/__(.*?)__/,"%|%B$1%|%_")
 		.replace(/\*\*(.*?)\*\*/, "%|%B$1%|%_")
@@ -50,6 +50,9 @@ var send_hangouts_msg = function(user, message) {
 		.replace(/(https?:\/\/\S*)/, "%|%L$1%|%_");
 
 	var sections = msg.split("%|%");
+
+	console.log("MESSAGE:");
+	console.log(sections);
 
 	for (var i = 0; i < sections.length; i++) {
 		var seg = sections[i];
@@ -72,8 +75,6 @@ var send_hangouts_msg = function(user, message) {
 				bld.text(cur);
 		}
 	}
-
-	bld.text(msg);
 
 	client.sendchatmessage(config.GROUP_ID, bld.toSegments());
 	last_sent_author = user;
