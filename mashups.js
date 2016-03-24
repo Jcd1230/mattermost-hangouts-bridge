@@ -51,9 +51,9 @@ var send_hangouts_msg = function(user, message) {
 
 	var sections = msg.split("%|%");
 
-	console.log("MESSAGE:");
-	console.log(msg);
-	console.log(sections);
+	//console.log("MESSAGE:");
+	//console.log(msg);
+	//console.log(sections);
 
 	for (var i = 0; i < sections.length; i++) {
 		var seg = sections[i];
@@ -102,7 +102,7 @@ var send_mm_msg = function(user, msg) {
 	});
 	req.write(postData);
 	req.end();
-	console.log(JSON.stringify(payload));
+	//console.log(JSON.stringify(payload));
 }
 
 
@@ -134,7 +134,7 @@ var get_user = function(client, chat_id) {
 			user.hangouts_id = chat_id;
 			user_info[chat_id] = user;
 
-			console.log(user);
+			//console.log(user);
 			return user_info[chat_id];
 		});
 	} else {
@@ -162,7 +162,8 @@ client.on('chat_message', function(ev) {
 		if (sender && sender != config.BOT_ID) {
 			var segments = ev.chat_message.message_content.segment;
 			console.log("HANGOUTS MESSAGE");
-			console.log(segments)
+			console.log(ev);
+			console.log(segments);
 			//console.log("Chat ID: " + ev.sender_id.chat_id);
 			if (Array.isArray(segments)) {
 				get_user(client, ev.sender_id.chat_id).then(function(user) {
