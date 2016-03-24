@@ -41,7 +41,38 @@ var send_hangouts_msg = function(user, message) {
 		bld.bold(user).text(": ");
 	}
 
-	var msg = message.replace(/```[\s\S]*```/," <code snippet> ");
+	var msg = message.replace(/```[\s\S]*```/," %|%_<code snippet>%|%_ ")
+		.replace(/```[\s\S]*/," %|%_<code snippet>%|%_ ")
+		.replace(/__(.*?)__/,"%|%B$1%|%_")
+		.replace(/\*\*(.*?)\*\*/, "%|%B$1%|%_")
+		.replace(/_(.*?)_/, "%|%I$1%|%_")
+		.replace(/\*(.*?)\*/, "%|%I$1%|%_")
+		.replace(/(https?:\/\/\S*)/, "%|%L$1%|%_");
+
+	var sections = msg.split("%|%");
+
+	for (var i = 0; i < sections.length; i++) {
+		var seg = sections[i];
+		if (seg.length < 1) {
+			continue;
+		}
+		var style = seg.charAt(0);
+		var cur = seg.substr(1);
+		switch (stylec) {
+			case "B":
+				bld.bold(cur);
+				break;
+			case "I":
+				bld.italic(cur);
+				break;
+			case "L":
+				bld.link(cur, cur);
+				break;
+			default:
+				bld.text(cur);
+		}
+	}
+
 	bld.text(msg);
 
 	client.sendchatmessage(config.GROUP_ID, bld.toSegments());
@@ -87,7 +118,6 @@ var reconnect = function() {
 	});
 };
 
-
 var get_user = function(client, chat_id) {
 	if (!user_info[chat_id]) {
 		return client.getentitybyid([chat_id]).then(function(val) {
@@ -97,7 +127,7 @@ var get_user = function(client, chat_id) {
 			var usercolor = getnewcolor();
 			console.log("Color " + usercolor);
 			var userchar = (user.first_name || (user.emails && user.emails[0]) || "Unknown").charAt(0);
-			var autourl = "http://placeholdit.imgix.net/~text?txtsize=34&w=60&h=60&txttrack=0&txtclr=ffffff&txt=" + userchar + "&bg=" + usercolor;
+			var autourl = "http://placeholdit.imgix.net/~text?txtsize=80&w=128&h=128&txttrack=0&txtclr=ffffff&txt=" + userchar + "&bg=" + usercolor;
 			user.icon_url = user.photo_url || autourl;
 			user.hangouts_id = chat_id;
 			user_info[chat_id] = user;
