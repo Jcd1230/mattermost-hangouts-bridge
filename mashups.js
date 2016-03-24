@@ -95,7 +95,7 @@ var get_user = function(client, chat_id) {
 			console.log("Color " + usercolor);
 			var userchar = (user.first_name || (user.emails && user.emails[0]) || "Unknown").charAt(0);
 			var autourl = "http://placeholdit.imgix.net/~text?txtsize=34&w=60&h=60&txttrack=0&txtclr=ffffff&txt=" + userchar + "&bg=" + usercolor;
-			user.icon_url = /*user.photo_url ||*/ autourl;
+			user.icon_url = user.photo_url || autourl;
 			user.hangouts_id = chat_id;
 			user_info[chat_id] = user;
 
