@@ -105,6 +105,7 @@ var get_user = function(client, chat_id) {
 }
 
 var hangouts_receive = function(user, segments) {
+	console.log("HANGOUTS MESSAGE FROM USER");
 	console.log("%j",user);
 	var msg = "";
 	for (var i = 0; i < segments.length; i++) {
@@ -119,6 +120,7 @@ client.on('chat_message', function(ev) {
 		var sender = ev.sender_id && ev.sender_id.chat_id || null
 		if (sender && sender != BOT_ID) {
 			var segments = ev.chat_message.message_content.segment;
+			console.log("HANGOUTS MESSAGE");
 			console.log(segments)
 			//console.log("Chat ID: " + ev.sender_id.chat_id);
 			if (Array.isArray(segments)) {
