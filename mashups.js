@@ -90,7 +90,12 @@ var get_user = function(client, chat_id) {
 		return client.getentitybyid([chat_id]).then(function(val) {
 			var user = val.entities[0].properties;
 			console.log("NEW USER");
-			user.icon_url = user.photo_url || ("http://placeholdit.imgix.net/~text?txtsize=34&w=60&h=60&txttrack=0&txtclr=ffffff&txt=" + user.first_name.charAt(0) + "&bg=" + getnewcolor());
+			console.log("%j", user);
+			var usercolor = getnewcolor();
+			console.log("Color " + usercolor);
+			var userchar = (user.first_name || user.emails[0] || "Unknown").charAt(0);
+			var autourl = "http://placeholdit.imgix.net/~text?txtsize=34&w=60&h=60&txttrack=0&txtclr=ffffff&txt=" + userchar + "&bg=" + usercolor;
+			user.icon_url = user.photo_url ||  + getnewcolor());
 			user.hangouts_id = chat_id;
 			user_info[chat_id] = user;
 
