@@ -58,7 +58,7 @@ var send_hangouts_msg = function(user, message) {
 		}
 		var style = seg.charAt(0);
 		var cur = seg.substr(1);
-		switch (stylec) {
+		switch (style) {
 			case "B":
 				bld.bold(cur);
 				break;
