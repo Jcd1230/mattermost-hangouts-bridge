@@ -113,6 +113,7 @@ client.on('chat_message', function(ev) {
 	if (ev.chat_message && ev.chat_message.message_content) {
 		var segments = ev.chat_message.message_content.segment;
 		console.log(segments)
+		console.log("Chat ID: " + ev.sender_id.chat_id);
 		if (Array.isArray(segments)) {
 			if (ev.sender_id && ev.sender_id.chat_id) {
 				get_user(client, ev.sender_id.chat_id).then(function(user) {
