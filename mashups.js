@@ -159,16 +159,19 @@ var hangouts_receive = function(user, ev) {
 	console.log("%j",user);
 	last_sent_author = "";
 	var msg = "";
-	for (var i = 0; i < segments.length; i++) {
-		var seg = segments[i];
-		msg = msg + seg.text;
-	}
 
+	if (Array.isArray(segments)) {
+		for (var i = 0; i < segments.length; i++) {
+			var seg = segments[i];
+			msg = msg + seg.text;
+		}
+	}
 	if (typeof(imageurl) == "string" ) {
 		msg = msg + "\n![]("+imageurl+")"
 	}
-
-	send_mm_msg(user, msg);
+	if (msg != "") {
+		send_mm_msg(user, msg);
+	}
 }
 
 client.on('chat_message', function(ev) {
@@ -178,11 +181,9 @@ client.on('chat_message', function(ev) {
 			console.log("HANGOUTS MESSAGE");
 			console.log("%j", ev);
 			//console.log("Chat ID: " + ev.sender_id.chat_id);
-			if (Array.isArray(segments)) {
-				get_user(client, ev.sender_id.chat_id).then(function(user) {
-					hangouts_receive(user, ev);
-				});
-			}
+			get_user(client, ev.sender_id.chat_id).then(function(user) {
+				hangouts_receive(user, ev);
+			});
 		}
 	}
 });
