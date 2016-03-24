@@ -41,7 +41,7 @@ var last_sent_author = "";
 
 var send_hangouts_msg = function(user, msg) {
 	var bld = new Client.MessageBuilder();
-	client.sendchatmessage(GROUP_ID, bld.text((last_sent_author != user ? (user + ": ") : "") + msg).toSegments());
+	client.sendchatmessage(GROUP_ID, bld.text((last_sent_author != user ? (user + ": ") : "") + msg.replace(/```.*```/," <code snippet> ")).toSegments());
 	last_sent_author = user;
 }
 
