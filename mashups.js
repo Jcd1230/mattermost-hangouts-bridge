@@ -144,7 +144,17 @@ var get_user = function(client, chat_id) {
 	}
 }
 
-var hangouts_receive = function(user, segments) {
+var hangouts_receive = function(user, ev) {
+	var segments = ev.chat_message.message_content.segment;
+	var imageurl = null;
+	try {
+		var data = ev.chat_message.message_content.attachment[0].embed_item.data
+		for (var id in data) {
+			imageurl = data[id][3];
+			break;
+		}
+	} catch(e) {}
+
 	console.log("HANGOUTS MESSAGE FROM USER");
 	console.log("%j",user);
 	last_sent_author = "";
@@ -153,6 +163,11 @@ var hangouts_receive = function(user, segments) {
 		var seg = segments[i];
 		msg = msg + seg.text;
 	}
+
+	if (typeof(imageurl) == "string" ) {
+		msg = msg + "\n![]("+imageurl+")"
+	}
+
 	send_mm_msg(user, msg);
 }
 
@@ -160,17 +175,12 @@ client.on('chat_message', function(ev) {
 	if (ev.chat_message && ev.chat_message.message_content) {
 		var sender = ev.sender_id && ev.sender_id.chat_id || null
 		if (sender && sender != config.BOT_ID) {
-			var segments = ev.chat_message.message_content.segment;
 			console.log("HANGOUTS MESSAGE");
-			console.log(ev);
-			console.log("----------");
-			console.log(ev.chat_message.message_content.attachment);
-			console.log("----------");
-			console.log(segments);
+			console.log("%j", ev);
 			//console.log("Chat ID: " + ev.sender_id.chat_id);
 			if (Array.isArray(segments)) {
 				get_user(client, ev.sender_id.chat_id).then(function(user) {
-					hangouts_receive(user, segments);
+					hangouts_receive(user, ev);
 				});
 			}
 		}
