@@ -112,6 +112,7 @@ var get_user = function(client, chat_id) {
 var hangouts_receive = function(user, segments) {
 	console.log("HANGOUTS MESSAGE FROM USER");
 	console.log("%j",user);
+	last_sent_author = "";
 	var msg = "";
 	for (var i = 0; i < segments.length; i++) {
 		var seg = segments[i];
