@@ -150,7 +150,7 @@ var hangouts_receive = function(user, ev) {
 	try {
 		var data = ev.chat_message.message_content.attachment[0].embed_item.data
 		for (var id in data) {
-			imageurl = data[id][3];
+			imageurl = data[id][5];
 			break;
 		}
 	} catch(e) {}
