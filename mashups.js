@@ -101,7 +101,7 @@ var get_user = function(client, chat_id) {
 	}
 }
 
-var hangouts_receive = function(client, user, segments) {
+var hangouts_receive = function(user, segments) {
 	console.log("%j",user);
 	var msg = "";
 	for (var i = 0; i < segments.length; i++) {
