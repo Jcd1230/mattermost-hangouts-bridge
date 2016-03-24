@@ -2,12 +2,7 @@ var Client = require("hangupsjs");
 var Q = require('q');
 var http = require("http");
 var qs = require("querystring");
-
-var GROUP_ID = "Ugxfu9QF7O2mjXLu_6N4AaABAQ";
-
-var IN_HOOK_ID = "8wfniq93oiyntcxbqf8ipfkwte";
-
-var BOT_ID = "116550526839970800647"; //bot chat_id
+var config = require("./config.js");
 
 var creds = function() {
 	return {
@@ -39,9 +34,17 @@ var connected = false;
 
 var last_sent_author = "";
 
-var send_hangouts_msg = function(user, msg) {
+var send_hangouts_msg = function(user, message) {
 	var bld = new Client.MessageBuilder();
-	client.sendchatmessage(GROUP_ID, bld.text((last_sent_author != user ? (user + ": ") : "") + msg.replace(/```[\s\S]*```/," <code snippet> ")).toSegments());
+
+	if (last_sent_author != user) {
+		bld.bold(user).text(": ");
+	}
+
+	var msg = message.replace(/```[\s\S]*```/," <code snippet> ");
+	bld.text(msg);
+
+	client.sendchatmessage(config.GROUP_ID, bld.toSegments());
 	last_sent_author = user;
 }
 
@@ -55,7 +58,7 @@ var send_mm_msg = function(user, msg) {
 	var req = http.request({
 		port: 8065,
 		method: "POST",
-		path: "/hooks/" + IN_HOOK_ID,
+		path: "/hooks/" + config.IN_HOOK_ID,
 		headers: {
 			'Content-Type': 'application/json',
 			'Content-Length': postData.length
@@ -124,7 +127,7 @@ var hangouts_receive = function(user, segments) {
 client.on('chat_message', function(ev) {
 	if (ev.chat_message && ev.chat_message.message_content) {
 		var sender = ev.sender_id && ev.sender_id.chat_id || null
-		if (sender && sender != BOT_ID) {
+		if (sender && sender != config.BOT_ID) {
 			var segments = ev.chat_message.message_content.segment;
 			console.log("HANGOUTS MESSAGE");
 			console.log(segments)
