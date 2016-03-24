@@ -163,7 +163,9 @@ client.on('chat_message', function(ev) {
 			var segments = ev.chat_message.message_content.segment;
 			console.log("HANGOUTS MESSAGE");
 			console.log(ev);
-			console.log(ev.chat_message.annotation);
+			console.log("----------");
+			console.log(ev.chat_message.message_content.attachment);
+			console.log("----------");
 			console.log(segments);
 			//console.log("Chat ID: " + ev.sender_id.chat_id);
 			if (Array.isArray(segments)) {
